@@ -22,9 +22,9 @@ describe("FlexiCoin", function () {
 
   before( async function (){
 
-    [owner, addr1, addr2, lock1, lock2, lock3, lock4] = await ethers.getSigners();
+    [owner, addr1, addr2, addr3, lock1, lock2, lock3, lock4] = await ethers.getSigners();
     amount = '1000000000000000000000'; //1000 tokens
-    amount_over_limit = '90000000000000000000000001';//
+    amount_over_limit = '90000000000000000000000001'; //
     amount_lock ='16000000000000000000000000';
 
     FlexiCoinContract = await ethers.getContractFactory('FlexiCoin')
@@ -34,14 +34,20 @@ describe("FlexiCoin", function () {
 
     await flexicoinContract.setMinterRole(addr1.address)
 
+    await flexicoinContract.unpause()
     await flexicoinContract.lock(lock1.address, lock2.address, lock3.address, lock4.address)
+    await flexicoinContract.pause()
 
     minterRole = await flexicoinContract.MINTER_ROLE()
 
   })
 
- it('Total supply is 16.000.000', async function() {
+ it('Total supply is 80.000.000', async function() {
     expect((await flexicoinContract.totalSupply()).toString()).to.equal('80000000000000000000000000')
+ })
+
+ it('Should be paused', async function(){
+  expect ( await flexicoinContract.paused()).to.be.true 
  })
 
  it('Minter role set correctly', async function(){
@@ -76,6 +82,11 @@ describe("FlexiCoin", function () {
 
  it('Sending to lock4 successfully', async function(){
   expect(await flexicoinContract.balanceOf(lock4.address)).to.equal(amount_lock);
+ })
+
+ it('Should not transfer while while paused', async function(){
+  const reason = "ERC20Pausable: token transfer while paused";
+  await expect ( flexicoinContract.connect(addr2).transfer(addr3.address, amount) ).to.be.revertedWith(reason);
  })
   
 });

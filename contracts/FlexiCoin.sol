@@ -1,16 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 // Import ERC20 from the OpenZeppelin Contracts library
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 // Import Ownable from the OpenZeppelin Contracts library
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract FlexiCoin is ERC20Pausable, Ownable, AccessControl {
+contract FlexiCoin is ERC20,Pausable, Ownable, AccessControl {
 
     //Role identifiers
     bytes32 constant public MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -19,7 +19,6 @@ contract FlexiCoin is ERC20Pausable, Ownable, AccessControl {
 
     uint256 constant public AMOUNTMINT = 16_000_000*10**18;
 
-    uint256 constant public SELL_LIMIT = 30*10**18;
     uint256 constant public REWARD_LIMIT = 10*10**18;
     uint256 public amount_reward = 0;
     uint256 private amount_sell = 0;
@@ -32,6 +31,7 @@ contract FlexiCoin is ERC20Pausable, Ownable, AccessControl {
         // Grant the contract deployer the default admin role: it will be able
         // to grant and revoke any roles
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        pause();
     }
 
     function setMinterRole(address _account) public onlyOwner{
@@ -59,16 +59,6 @@ contract FlexiCoin is ERC20Pausable, Ownable, AccessControl {
        _mint(_lock4, AMOUNTMINT);
     }
 
-    
-    function buyCoin(uint256 _amount) payable public returns(bool) {
-        require(amount_sell + _amount*10**18 <= SELL_LIMIT, 'Limit reach');
-        require(msg.value == _amount*PRICE, 'Insufficient pay');
-        
-        amount_sell += _amount*10**18;
-        _mint(msg.sender, _amount*10**18);
-        
-        return true;
-    }
 
     function reward(uint256 _amount, address _add) public onlyOwner {
         require(amount_reward + _amount*10**18 <= REWARD_LIMIT, 'Limit reach');
@@ -77,12 +67,33 @@ contract FlexiCoin is ERC20Pausable, Ownable, AccessControl {
         //Emit RewardEvent
     }
 
-    function withdraw(uint256 _amount, address payable _add) public onlyOwner {
-     _add.transfer(_amount);
-    }
-
     function getAmount_sell() public view returns(uint256){
         return amount_sell;
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    /**
+     * @dev See {ERC20-_beforeTokenTransfer}.
+     *
+     * Requirements:
+     *
+     * - the contract must not be paused.
+     */
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual override {
+        super._beforeTokenTransfer(from, to, amount);
+
+        require(!paused() || hasRole(MINTER_ROLE, msg.sender), "ERC20Pausable: token transfer while paused");
     }
     
 }

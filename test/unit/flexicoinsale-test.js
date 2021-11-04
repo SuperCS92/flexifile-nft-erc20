@@ -18,11 +18,18 @@ const { isCallTrace } = require("hardhat/internal/hardhat-network/stack-traces/m
 
 before( async function (){
   
-  [owner, addr1, addr2] = await ethers.getSigners();
+  [owner, addr1, addr2, addr3] = await ethers.getSigners();
+
+  //First kyc contract
+  //Then the Sale Contract
+  KycContract = await ethers.getContractFactory('KycContract')
+  kycContract = await KycContract.deploy()
+
+  await kycContract.setSingleKyc(addr2.address);
 
   //Then the Sale Contract
   FlexiCoinSaleContract = await ethers.getContractFactory('FlexiCoinSale')
-  flexicoinSaleContract = await  FlexiCoinSaleContract.deploy(_rate, owner.address, addr1.address)
+  flexicoinSaleContract = await  FlexiCoinSaleContract.deploy(_rate, owner.address, addr1.address, kycContract.address)
   
   await flexicoinSaleContract.deployed() 
 
@@ -63,6 +70,14 @@ before( async function (){
         const reason = "Investor cap out of boundaries";
         await expect ( flexicoinSaleContract.connect(addr2).buyTokens(addr2.address, {value: value}) ).to.be.revertedWith(reason);
       });
+    });
+
+    describe('When the investor is not whitelisted', function(){
+      it('rejects the transaction', async function(){
+        const value = investorMinCap;
+        const reason = "Operator not white listed";
+        await expect ( flexicoinSaleContract.connect(addr3).buyTokens(addr3.address, {value: value}) ).to.be.revertedWith(reason);
+      });   
     });
 
   });

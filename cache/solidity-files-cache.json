@@ -541,8 +541,8 @@
       ]
     },
     "/Volumes/Seagate/Hardhat/Flexifile/contracts/FlexiCoin.sol": {
-      "lastModificationDate": 1635781705000,
-      "contentHash": "95f19a3436271b54fb7cd9aa472ee2a9",
+      "lastModificationDate": 1636035506000,
+      "contentHash": "8a93e76957f11779992331520f825cb7",
       "sourceName": "contracts/FlexiCoin.sol",
       "solcConfig": {
         "version": "0.8.9",
@@ -567,8 +567,9 @@
         }
       },
       "imports": [
+        "@openzeppelin/contracts/security/Pausable.sol",
         "@openzeppelin/contracts/access/AccessControl.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
@@ -684,8 +685,8 @@
       ]
     },
     "/Volumes/Seagate/Hardhat/Flexifile/contracts/FlexiCoinSale.sol": {
-      "lastModificationDate": 1635870779000,
-      "contentHash": "81f982f54f8b9c02c7ce9f408015d787",
+      "lastModificationDate": 1636036020000,
+      "contentHash": "a2a2cd26bf7e7a3026df449a15872f78",
       "sourceName": "contracts/FlexiCoinSale.sol",
       "solcConfig": {
         "version": "0.8.9",
@@ -710,7 +711,8 @@
         }
       },
       "imports": [
-        "./Crowdsale/Crowdsale.sol"
+        "./Crowdsale/MintedCrowdsale.sol",
+        "./KycContract.sol"
       ],
       "versionPragmas": [
         "^0.8.0"

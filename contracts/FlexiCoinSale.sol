@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./Crowdsale/Crowdsale.sol";
+import "./Crowdsale/MintedCrowdsale.sol";
 import "./KycContract.sol";
 
-contract FlexiCoinSale is Crowdsale {
+contract FlexiCoinSale is MintedCrowdsale {
 
    //Minimum investor constribution - 0.002
    uint256 public investorMinCap = 2_000_000_000_000_000;

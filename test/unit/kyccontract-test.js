@@ -26,7 +26,6 @@ before( async function (){
   addresses.push(addr4.address)
   addresses.push(addr5.address)
 
-  //Then the Sale Contract
   KycContract = await ethers.getContractFactory('KycContract')
   kycContract = await KycContract.deploy()
   
