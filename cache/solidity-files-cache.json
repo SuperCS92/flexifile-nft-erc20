@@ -76,8 +76,8 @@
       ]
     },
     "/Volumes/Seagate/Hardhat/Flexifile/contracts/EcommerceToken.sol": {
-      "lastModificationDate": 1634828578000,
-      "contentHash": "b542235cc3a9c3f536a65f71367fab3e",
+      "lastModificationDate": 1636410306000,
+      "contentHash": "f773c773c2ddea8544e8e99c965c8cf0",
       "sourceName": "contracts/EcommerceToken.sol",
       "solcConfig": {
         "version": "0.8.9",

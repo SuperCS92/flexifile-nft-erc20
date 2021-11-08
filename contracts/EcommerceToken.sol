@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 /// @notice The Ecommerce Token that implements the ERC721 token with mint function
 /// @author Merunas Grincalaitis <merunasgrincalaitis@gmail.com>
-contract EcommerceToken is ERC721 {
+contract EcommerceToken is ERC721, Ownable {
     address public ecommerce;
     bool public isEcommerceSet = false;
     
@@ -43,7 +43,7 @@ contract EcommerceToken is ERC721 {
     }
 
     /// @notice To set the ecommerce smart contract address
-    function setEcommerce(address _ecommerce) public {
+    function setEcommerce(address _ecommerce) public  onlyOwner{
         require(!isEcommerceSet, 'The ecommerce address can only be set once');
         require(_ecommerce != address(0), 'The ecommerce address cannot be empty');
         isEcommerceSet = true;
@@ -51,7 +51,7 @@ contract EcommerceToken is ERC721 {
     }
     
     /// @notice To remove the ecommerce smart contract address
-    function removeEcommerce()  public {
+    function removeEcommerce()  public onlyOwner{
         require(isEcommerceSet, 'The ecommerce must be set');
         require(msg.sender != ecommerce, 'Only the ecommerce address can remove itself');
         isEcommerceSet = false;
